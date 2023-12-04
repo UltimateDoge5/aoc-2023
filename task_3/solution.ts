@@ -22,6 +22,80 @@ function part1() {
 	return sum;
 }
 
+function part2() {
+	let ratiosSum = 0;
+	const gearPositions: number[][] = [];
+
+	for (let x = 0; x < input.length; x++) {
+		for (let y = 0; y < input[x].length; y++) {
+			if (input[x][y] === "*") {
+				gearPositions.push([x, y]);
+			}
+		}
+	}
+
+	for (const [x, y] of gearPositions) {
+		ratiosSum += getGearRatio(x, y);
+	}
+
+	return ratiosSum;
+}
+
+function getGearRatio(x: number, y: number): number {
+	//Search around the gear for a number
+	let gearRatio = 1;
+	let gears = 0;
+	let skipUntilNextNumber = false;
+
+	for (let i = -1; i <= 1; i++) {
+		for (let j = -1; j <= 1; j++) {
+			if (skipUntilNextNumber && input[x + i][y + j]?.match(/\d/)) {
+				continue;
+			} else {
+				skipUntilNextNumber = false;
+			}
+
+			if (input[x + i][y + j]?.match(/\d/)) {
+				const number = getWholeNumber(x + i, y + j);
+				skipUntilNextNumber = true;
+				gearRatio *= parseInt(number);
+				gears += 1;
+			}
+		}
+		skipUntilNextNumber = false;
+	}
+
+	if (gears !== 2) {
+		return 0;
+	}
+
+	return gearRatio;
+}
+
+// Search for the number in both directions. Returned as string as we need the length
+function getWholeNumber(x: number, y: number): string {
+	let number = "";
+	// Search left
+	for (let i = y; i >= 0; i--) {
+		if (!input[x][i].match(/\d/)) {
+			break;
+		}
+
+		number = input[x][i] + number;
+	}
+
+	// Search right
+	for (let i = y + 1; i < input[x].length; i++) {
+		if (!input[x][i].match(/\d/)) {
+			break;
+		}
+
+		number += input[x][i];
+	}
+
+	return number;
+}
+
 //Check around the number for a symbol other than a .
 export function checkForSymbol(x: number, y: number, length: number): boolean {
 	for (let i = -1; i <= 1; i++) {
@@ -44,8 +118,9 @@ export function checkForSymbol(x: number, y: number, length: number): boolean {
 		}
 	}
 
-	console.log("No symbol found for", input[x].slice(y - length + 1, y + 1).join(""));
+	// console.log("No symbol found for", input[x].slice(y - length + 1, y + 1).join(""));
 	return false;
 }
 
 console.log("Part 1: ", part1());
+console.log("Part 2: ", part2());
