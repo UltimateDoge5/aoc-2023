@@ -1,9 +1,7 @@
 const input = await Deno.readTextFile("./input.txt");
 const lines = input.split("\n");
-// const mapNames = lines.map((line) => new RegExp(/(.+?(?=-to))-to-(.+?(?= map))/gm).exec(line)?.slice(1, 3)).filter(Boolean);
 
 function part1() {
-	performance.mark("start");
 	const seeds = lines[0].split(":")[1].trim().split(" ").map(Number);
 	const isMapped = new Array(seeds.length).fill(false);
 
@@ -28,8 +26,6 @@ function part1() {
 		}
 	});
 
-	performance.mark("end");
-	console.log(performance.measure("measure", "start", "end").duration);
 	return Math.min(...seeds);
 }
 
